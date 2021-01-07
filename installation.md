@@ -1,60 +1,65 @@
-# GUIDE for developers (linux guide, examples will be for ArchLinux):
+GUIDE for developers (linux guide, examples will be for ArchLinux):
 
 ######## PREPARING SYSTEM #######
-# before install server you MUST install next: 
-# - node (sudo pacman -S node)
-# - npm (sudo pacman -S npm)
-# - Git (sudo pacman -S git)
-# - PostgreSQL (sudo pacman -S postgresql);
+ before install server you MUST install next:
+ - node (sudo pacman -S node)
+ - npm (sudo pacman -S npm)
+ - Git (sudo pacman -S git)
+ - PostgreSQL (sudo pacman -S postgresql);
 
-# OPTIONAL 
-# - yay (How to install yay - https://www.tecmint.com/install-yay-aur-helper-in-arch-linux-and-manjaro/)
-# - omnidb (yay -S omnidb-app)
-# - one of 
-#   - lighttpd (sudo pacman -S lighttpd) # my choice (lighttpd.conf you can find next)
-#   - apache (sudo pacman -S apache)
+ OPTIONAL
+ - yay (How to install yay - https://www.tecmint.com/install-yay-aur-helper-in-arch-linux-and-manjaro/)
+ - omnidb (yay -S omnidb-app)
+ - one of
+   - lighttpd (sudo pacman -S lighttpd) # my choice (lighttpd.conf you can find next)
+   - apache (sudo pacman -S apache)
 
-# ===== Postgres PART
-# ====================
-# You must be sure that after postgres installation you can call psql
+ ===== Postgres PART
+ ====================
+ You must be sure that after postgres installation you can call psql
 
-# It may help you - https://wiki.archlinux.org/index.php/PostgreSQL
-# try it - if you see help - psql prepared for work
-$ psql --help 
+ It may help you - https://wiki.archlinux.org/index.php/PostgreSQL
+ try it - if you see help - psql prepared for work
+```
+$ psql --help
+```
 
-# Switch to [postgres] user 
+ Switch to [postgres] user
+```
 $ su -l postgres
 # OR
 $ sudo -iu postgres
 # OR
 $ sudo su - postgres
 
-# Init Postgres under [postgres] user
-# With defaul locale
+```
+
+ Init Postgres under [postgres] user
+ With defaul locale
 [postgres]$ initdb -D /var/lib/postgres/data
 
-# Or with custom locale
+ Or with custom locale
 [postgres]$ initdb --locale=en_US.UTF-8 -E UTF8 -D /var/lib/postgres/data
 
-# Next we need add postgres to services
+ Next we need add postgres to services
 [postgres]$ sudo systemctl enable postgresql
 
-# Next we need run service
+ Next we need run service
 [postgres]$ sudo systemctl start postgresql
 
-# Next we check service (if ok - good. If not ok - start googling)
+ Next we check service (if ok - good. If not ok - start googling)
 [postgres]$ sudo systemctl enable postgresql
 
-# Next create PostgresSQL user [postgres]
+ Next create PostgresSQL user [postgres]
 [postgres]$ createuser postgres
 
-# Last step create [mapper] database
+ Last step create [mapper] database
 [postgres]$ createdb -O postgres mapper
 
-# We need check that database [mapper] has been created
+ We need check that database [mapper] has been created
 [postgres]$ psql
 
-# \l command show us all databases
+ \l command show us all databases
 postgres=# \l
 
 # ==== OUTPUT
@@ -64,39 +69,39 @@ postgres=# \l
 # ---------------------+----------+----------+-------------+-------------+-----------------------
 #  mapper              | postgres | UTF8     | ru_RU.UTF-8 | ru_RU.UTF-8 | 
 
-# exit from psql
+ exit from psql
 postgres=# \q
 
-# Exit from [postgres] user
+ Exit from [postgres] user
 [postgres]$ exit
 
-# =======================
-# ===== END Postgres PART
+ =======================
+ ===== END Postgres PART
 
 
-# Create your folder where will be placed project
-# For example it may be /home/user/www/wanderer/ next - YOUR_FOLDER
+ Create your folder where will be placed project
+ For example it may be /home/user/www/wanderer/ next - YOUR_FOLDER
 
 
 ############ Configuring HTTPS ###########
 ##########################################
 
-# I generated free certificate here: https://freessl.space/
-# Apache openssl How to: https://httpd.apache.org/docs/2.4/ssl/ssl_howto.html
+ I generated free certificate here: https://freessl.space/
+ Apache openssl How to: https://httpd.apache.org/docs/2.4/ssl/ssl_howto.html
 
-# Lighttpd instruction: 
-# 1) Create Folder
+ Lighttpd instruction:
+ 1) Create Folder
 $ mkdir -p /etc/lighttpd/keys && cd /etc/lighttpd/keys
 
-# 2) Create pem file for lighttpd
+ 2) Create pem file for lighttpd
 $ cat YOUR_HOST.key YOUR_HOST.crt > YOUR_HOST.pem
 
-# 3) Create Lighttpd config file
+ 3) Create Lighttpd config file
 
-# Config usually placed here: /etc/lighttpd/lighttpd.conf
-# This is a minimal example config
-# See /usr/share/doc/lighttpd
-# and http://redmine.lighttpd.net/projects/lighttpd/wiki/Docs:ConfigurationOptions
+ Config usually placed here: /etc/lighttpd/lighttpd.conf
+ This is a minimal example config
+ See /usr/share/doc/lighttpd
+ and http://redmine.lighttpd.net/projects/lighttpd/wiki/Docs:ConfigurationOptions
 ###############################################
 ############### lighttpd.conf #################
 server.port             = 80
@@ -150,55 +155,55 @@ $HTTP["host"] == "YOUR_HOST" {
 ############ INSTALLING ###############
 #######################################
 
-# So, now we ready for instal Wanderer server
+ So, now we ready for instal Wanderer server
 $ cd YOUR_FOLDER
 
 
-# ==== SERVER
-# ===========
-# First - you need clone server repo
+ ==== SERVER
+ ===========
+ First - you need clone server repo
 $ git clone https://github.com/DanSylvest/wanderer-server
 
-# ALSO you need check EVE DATABASE DUMP here: https://www.fuzzwork.co.uk/dump/
-# you need download actual DB 
-# - find last folder which looks like [sde-xxxxxxxx-TRANQUILITY] and open it
-# - find file looks like [postgres-xxxxxxxx-TRANQUILITY.dmp.bz2]
-# - where xxxxxxxx is date
-# - download it
-# - go into download folder and decompress it
+ ALSO you need check EVE DATABASE DUMP here: https://www.fuzzwork.co.uk/dump/
+ you need download actual DB
+ - find last folder which looks like [sde-xxxxxxxx-TRANQUILITY] and open it
+ - find file looks like [postgres-xxxxxxxx-TRANQUILITY.dmp.bz2]
+ - where xxxxxxxx is date
+ - download it
+ - go into download folder and decompress it
 $ bzip2 -dk postgres-xxxxxxxx-TRANQUILITY.dmp.bz2
 
-# next you should copy or move [postgres-xxxxxxxx-TRANQUILITY.dmp] into: YOUR_FOLDER/wanderer-server/js/db/sdeDump
-# also you MUST remove old dump
+ next you should copy or move [postgres-xxxxxxxx-TRANQUILITY.dmp] into: YOUR_FOLDER/wanderer-server/js/db/sdeDump
+ also you MUST remove old dump
 
-# we need download node_modules for project so:
+ we need download node_modules for project so:
 $ npm install
 
-# also we MUST install wanderer server (this is not fast process)
+ also we MUST install wanderer server (this is not fast process)
 $ cd YOUR_FOLDER/wanderer-server/
 $ npm run installApp
 
-# If installation done - it's all
+ If installation done - it's all
 
 ####### CONFIGURING
-# Before start server and client you sould configurate server and client config.
+ Before start server and client you sould configurate server and client config.
 
 ####### CREATE CCP APPLICATION for API Access
-# 0) Go here: https://developers.eveonline.com/applications
-# 1) Create new app, fill Name and Description
-# 2) Select type "Authentication & API Access"
-# 3) Permissions: you MUST set next scopes:
-#     - esi-location.read_location.v1 
-#     - esi-location.read_ship_type.v1 
-#     - esi-ui.write_waypoint.v1 
-#     - esi-location.read_online.v1
-# 4) Callback URL: 
-#     Template of callback <PROTOCOL>://<HOST>/?page=ssoAuth
-#     Example: http://yourHostName.com/?page=ssoAuth
-#     Protocol can be http or https
-# 5) Create server config: 
-# It should be placed in: YOUR_FOLDER/wanderer-server/js/conf;
-# Copy Client ID and Secret Key from your CCP Application and fill empty fields
+ 0) Go here: https://developers.eveonline.com/applications
+ 1) Create new app, fill Name and Description
+ 2) Select type "Authentication & API Access"
+ 3) Permissions: you MUST set next scopes:
+     - esi-location.read_location.v1
+     - esi-location.read_ship_type.v1
+     - esi-ui.write_waypoint.v1
+     - esi-location.read_online.v1
+ 4) Callback URL:
+     Template of callback <PROTOCOL>://<HOST>/?page=ssoAuth
+     Example: http://yourHostName.com/?page=ssoAuth
+     Protocol can be http or https
+ 5) Create server config:
+ It should be placed in: YOUR_FOLDER/wanderer-server/js/conf;
+ Copy Client ID and Secret Key from your CCP Application and fill empty fields
 ############### custom.json #############
 {
 	"eve": {
@@ -209,8 +214,8 @@ $ npm run installApp
 	}
 }
 ############### custom.json #############
-# 6) Create client config: 
-# It should be placed in: YOUR_FOLDER/wanderer-client/src/conf;
+ 6) Create client config:
+ It should be placed in: YOUR_FOLDER/wanderer-client/src/conf;
 ############### custom.js #############
 module.exports = {
     eve: {
@@ -225,9 +230,9 @@ module.exports = {
 
 
 ##### Setting SSL 
-# If you want use HTTPS protocol you need configuring server config. 
-# Example
-# Because i using lighttpd - my keys placed here: /etc/lighttpd/keys, but it optional
+ If you want use HTTPS protocol you need configuring server config.
+ Example
+ Because i using lighttpd - my keys placed here: /etc/lighttpd/keys, but it optional
 ############### custom.json ##############
 {
     "eve": {
@@ -258,19 +263,21 @@ $ git clone https://github.com/DanSylvest/wanderer-client
 $ cd YOUR_FOLDER/wanderer-client/
 $ npm install 
 
-# it's all :)
+it's all :)
 ===============
 
 
-# How to start server:
+ How to start server:
 $ cd YOUR_FOLDER/wanderer-server/
 $ npm run dev
 
 
-# How to start client on develop server
+ How to start client on develop server
 $ cd YOUR_FOLDER/wanderer-client/
 $ npm run serve
 
-# OR if you want build 
-# Then files will be in directory [YOUR_FOLDER/wanderer-client/dist]
+ OR if you want build
+ Then files will be in directory [YOUR_FOLDER/wanderer-client/dist]
+```
 $ npm run buildDev
+```
