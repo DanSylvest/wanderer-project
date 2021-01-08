@@ -1,13 +1,14 @@
+
 #### GUIDE for developers (linux guide, examples will be for ArchLinux):
 ##### PREPARING SYSTEM
 
-###### before install server you MUST install next:
+##### before install server you MUST install next:
 - node (sudo pacman -S node)
  - npm (sudo pacman -S npm)
  - Git (sudo pacman -S git)
  - PostgreSQL (sudo pacman -S postgresql);
 
-###### OPTIONAL
+##### OPTIONAL
  - yay (How to install yay - https://www.tecmint.com/install-yay-aur-helper-in-arch-linux-and-manjaro/)
  - omnidb (yay -S omnidb-app)
  - one of
@@ -16,7 +17,7 @@
 
  ##### Postgres PART
  You __MUST__ be sure that after postgres installation you can call __psql__
- It may help you - https://wiki.archlinux.org/index.php/PostgreSQL
+  It may help you - https://wiki.archlinux.org/index.php/PostgreSQL
 
 ```
 #  Try it - if you see help - psql prepared for work
@@ -90,13 +91,15 @@ Exit from [postgres] user:
 ```
 
 Create your folder where will be placed project
+
 For example it may be /home/user/www/wanderer/ next - YOUR_FOLDER
 
-### HTTPS
+#### HTTPS
 generated free certificate here: https://freessl.space/
+
 Apache openssl How to: https://httpd.apache.org/docs/2.4/ssl/ssl_howto.html
 
-###### Lighttpd instruction:
+##### Lighttpd instruction:
 Create Folder:
 ```
 $ mkdir -p /etc/lighttpd/keys && cd /etc/lighttpd/keys
@@ -107,9 +110,13 @@ Create pem file for lighttpd:
 $ cat YOUR_HOST.key YOUR_HOST.crt > YOUR_HOST.pem
 ```
 Create Lighttpd config file:
+
 Config usually placed here: /etc/lighttpd/lighttpd.conf
+
 This is a minimal example config
+
 See /usr/share/doc/lighttpd
+
 and http://redmine.lighttpd.net/projects/lighttpd/wiki/Docs:ConfigurationOptions
 ```
 ############### lighttpd.conf #################
@@ -160,18 +167,19 @@ $HTTP["host"] == "YOUR_HOST" {
 ############## LIGHTTPD config ################
 ```
 
-###### INSTALLING
+##### INSTALLING
 
 So, now we ready for instal Wanderer server
 ```
 $ cd YOUR_FOLDER
 ```
 
- ==== SERVER
- ===========
- First - you need clone server repo
-$ git clone https://github.com/DanSylvest/wanderer-server
+##### SERVER
 
+ First - you need clone server repo
+ ```
+$ git clone https://github.com/DanSylvest/wanderer-server
+```
  ALSO you need check EVE DATABASE DUMP here: https://www.fuzzwork.co.uk/dump/
  you need download actual DB
  - find last folder which looks like [sde-xxxxxxxx-TRANQUILITY] and open it
@@ -193,38 +201,47 @@ $ npm run installApp
 
  If installation done - it's all
 
-####### CONFIGURING
+__CONFIGURING__
  Before start server and client you sould configurate server and client config.
 
-####### CREATE CCP APPLICATION for API Access
+__CREATE CCP APPLICATION for API Access__
  0) Go here: https://developers.eveonline.com/applications
  1) Create new app, fill Name and Description
  2) Select type "Authentication & API Access"
  3) Permissions: you MUST set next scopes:
-     - esi-location.read_location.v1
-     - esi-location.read_ship_type.v1
-     - esi-ui.write_waypoint.v1
-     - esi-location.read_online.v1
- 4) Callback URL:
+ ```
+   - esi-location.read_location.v1
+   - esi-location.read_ship_type.v1
+   - esi-ui.write_waypoint.v1
+   - esi-location.read_online.v1
+```
+
+4) Callback URL:
+```
      Template of callback <PROTOCOL>://<HOST>/?page=ssoAuth
      Example: http://yourHostName.com/?page=ssoAuth
      Protocol can be http or https
+```
  5) Create server config:
  It should be placed in: YOUR_FOLDER/wanderer-server/js/conf;
  Copy Client ID and Secret Key from your CCP Application and fill empty fields
-############### custom.json #############
+
+ __custom.json__
+ ```
 {
-	"eve": {
-		"app": {
-			"client_id": "",
-			"secret_key": ""
-		}
-	}
+   "eve": {
+      "app": {
+         "client_id": "",
+         "secret_key": ""
+      }
+   }
 }
-############### custom.json #############
+```
  6) Create client config:
  It should be placed in: YOUR_FOLDER/wanderer-client/src/conf;
-############### custom.js #############
+
+__custom.js__
+```
 module.exports = {
     eve: {
         sso: {
@@ -234,14 +251,17 @@ module.exports = {
         }
     }
 };
-############### custom.json #############
+```
 
 
-##### Setting SSL 
- If you want use HTTPS protocol you need configuring server config.
+
+####__Configurate SSL__
+ If you want use HTTPS protocol you need configuring __server config__.
  Example
  Because i using lighttpd - my keys placed here: /etc/lighttpd/keys, but it optional
-############### custom.json ##############
+
+ __custom.json__
+ ```
 {
     "eve": {
         "app": {
@@ -259,32 +279,36 @@ module.exports = {
         }
     }
 }
-############### custom.json ##############
+```
 
 
 
 
-# ==== CLIENT
-# ===========
+#### CLIENT
+it's all :)
+```
 $ cd YOUR_FOLDER
 $ git clone https://github.com/DanSylvest/wanderer-client
 $ cd YOUR_FOLDER/wanderer-client/
-$ npm install 
-
-it's all :)
-===============
+$ npm install
+```
 
 
- How to start server:
+
+__How to start server__:
+```
 $ cd YOUR_FOLDER/wanderer-server/
 $ npm run dev
+```
 
 
- How to start client on develop server
+__How to start client on develop server__
+```
 $ cd YOUR_FOLDER/wanderer-client/
 $ npm run serve
+```
 
- OR if you want build
+ __OR if you want build__
  Then files will be in directory [YOUR_FOLDER/wanderer-client/dist]
 ```
 $ npm run buildDev
