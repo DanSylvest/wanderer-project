@@ -13,6 +13,6 @@ Also you can read [__installation guide__](https://github.com/DanSylvest/wandere
 
 If you want help you can leave your issue [here](https://github.com/DanSylvest/wanderer-project/issues)  
 
-Useful refs:
+Useful refs:  
 <https://developers.eveonline.com/>  
 <https://www.fuzzwork.co.uk/dump/>  
