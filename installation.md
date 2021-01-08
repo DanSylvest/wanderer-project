@@ -308,7 +308,7 @@ $ cd YOUR_FOLDER/wanderer-client/
 $ npm run serve
 ```
 
- __OR if you want build__
+ __OR if you want build__:
  Then files will be in directory [YOUR_FOLDER/wanderer-client/dist]
 ```
 $ npm run buildDev
