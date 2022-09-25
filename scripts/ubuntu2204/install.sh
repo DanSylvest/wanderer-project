@@ -59,6 +59,8 @@ echo "upgrade node to latest version";
 sudo n stable;
 hash -r;
 
+sudo service postgresql start;
+
 PG_USER_HOME=$(sudo -H -u postgres bash -c 'echo $HOME');
 
 pgVersion=$(ls /usr/lib/postgresql/);
